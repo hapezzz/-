@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="studentMapper.StuMapper">
+<cache/>
+	<select id="selectStudentandCard" resultMap="stuandcard">
+		select * from student
+	</select>
+	<resultMap id="stuandcard" type="student">
+		<id property="stuNo" column="stuNo"></id>
+		<result property="stuName" column="stuName"></result>
+		<result property="classId" column="classId"></result>
+		<!-- 延迟加载的设置 ，（一对一关联）-->
+		<association property="card" javaType="Stucard" select="studentMapper.lazyLoadcard.lazyload" column="cardid">
+			<!--  <id property="scId" column="scid" />
+			<result property="scInfo" column="scinfo" />-->
+		</association>
+	</resultMap>
+
+	<select id="selectClassandStu" resultMap="classAndstu"
+		parameterType="int">
+		select s.*,c.*,sc.* from class c,student s,stucard sc where 
+		c.cid=s.classid and s.cardid=sc.scid and c.cid=#{classid}
+	</select>
+	<resultMap type="Class" id="classAndstu">
+		<id property="cId" column="cid" />
+		<result property="cName" column="cname" />
+		<!-- 一对多关联 -->
+		<collection property="students" ofType="Student">
+			<id property="stuNo" column="stuno" />
+			<result property="stuName" column="stuname" />
+			<result property="classId" column="classid" />
+			<!-- 一对一关联查询 -->
+			<association property="card" javaType="Stucard">
+				<id property="scId" column="scid" />
+				<result property="scInfo" column="scinfo" />
+			</association>
+		</collection>
+	</resultMap>
+</mapper>
