@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="zzz.Mapper.ArticleMapper">
+<cache/>
+	<!-- 写文章 -->
+	<insert	id="create_arts" parameterType="Article">
+		insert into articles values(#{article_id},#{content},#{author_id},#{block_id},to_date(#{upload_date},'yyyy-mm-dd hh24:mi:ss'),#{title},#{tag1},#{tag2},#{tag3},#{tag4},#{tag5})
+	</insert>
+	<!-- 查看文章基本信息 -->
+	<select id="view_article" parameterType="String" resultType="Article">
+		select * from articles where article_id=#{id}
+	</select>
+	
+
+	<!-- 用户是否赞过当前文章 -->
+	<select id="query_like" resultType="int">
+		select count(*) from fabulous where user_id=#{user_id} and article_id=#{art_id}
+	</select>
+	<!-- 用户是否举报过当前文章 -->
+	<select id="query_report" resultType="int" >
+		select count(*) from reports where user_id=#{user_id} and article_id=#{art_id}
+	</select>
+	<!-- 查看文章的被赞数 -->
+	<select id="query_likes" parameterType="String" resultType="int">
+		select count(*) from fabulous where article_id=#{id}
+	</select>
+	<!-- 查看文章的被举报数 -->
+	<select id="query_reports" parameterType="String" resultType="int">
+		select count(*) from reports where article_id=#{id}
+	</select>
+	<!-- 查看文章的评论数 -->
+	<select id="query_comments" parameterType="String" resultType="int">
+		select count(*) from comments where article_id=#{id}
+	</select>
+	<!-- 查看文章的分数 -->
+	<select id="query_scores" parameterType="String" resultType="int">
+		select score from scores where article_id=#{id}
+	</select>
+	<!-- 点赞文章 -->
+	<insert id="like_article" >
+		insert into fabulous values (#{user_id},#{art_id},to_date(#{date},'yyyy-mm-dd hh24:mi:ss'))
+	</insert>
+
+	<!-- 举报文章 -->
+	<insert id="report_article" >
+		insert into reports values (#{user_id},#{art_id},to_date(#{date},'yyyy-mm-dd hh24:mi:ss'))
+	</insert>
+	<!-- 删除文章 -->
+	<delete id="drop_article_likes" parameterType="String">
+		delete from fabulous where article_id=#{id}
+	</delete>
+	<delete id="drop_article_reports" parameterType="String">
+		delete from reports where article_id=#{id}
+	</delete>
+	<delete id="drop_article_comments" parameterType="String">
+		delete from comments where article_id=#{id}
+	</delete>
+	<delete	id="drop_article" parameterType="String">
+		delete from articles where article_id=#{id}
+	</delete>
+	<!-- 是否有评分记录 -->
+	<select id="query_scoreexist" resultType="int">
+		select count(*) from scores where user_id=#{user_id} and article_id=#{art_id}
+	</select>
+	<!-- 更新评分 -->
+	<update id="update_score" >
+		update scores set score = score+to_number(#{score}) where user_id=#{user_id} and article_id=#{art_id}
+	</update>
+	<insert id="score" >
+		insert into scores values (#{user_id},#{art_id},1)
+	</insert>
+</mapper>

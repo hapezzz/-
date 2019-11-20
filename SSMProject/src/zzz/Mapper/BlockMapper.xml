@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="zzz.Mapper.BlockMapper">
+ <cache/>
+ <!-- 板块名字唯一 -->
+	<select id="uniqueblock" parameterType="String" resultType="int">
+		select count(*) from blocks where block_name = #{name} 
+	</select>
+	<!-- 创建板块 -->
+	<insert id="create_block" parameterType="Block">
+		insert into blocks values (#{block_id},#{block_name},to_date(#{create_time},'yyyy-mm-dd hh24:mi:ss'),#{manager})
+	</insert>
+	<!-- 查询板块信息 -->
+	<select id="queryInfo_block" parameterType="String" resultType="Block">
+		select * from blocks where block_id=#{id} or manager=#{id} or block_name=#{id}
+	</select>
+
+	<select id="query_blockname" resultType="String">
+		select block_name from blocks
+	</select>
+	
+	<!-- 查询id -->
+	<select id="query_blockid" parameterType="String" resultType="String">
+		select block_id from blocks where block_name=#{name} 
+	</select>
+	<!-- 板块中所有文章 -->
+	<select id="queryallArt" parameterType="String" resultType="Article">
+		select * from articles where block_id=#{id} order by upload_date
+	</select>
+	<!-- 修改板块名字 -->
+	<update id="update_block" >
+		update blocks set block_name=#{new_name} where block_id=#{old_key} or block_name=#{old_key}
+	</update>
+	<!-- 更新板块管理员 -->
+	<update id="update_manager" >
+		update blocks set manager=#{manager} where block_id=#{old_key} or block_name=#{old_key}
+	</update>
+	<!-- 删除板块 文章先，板块后  -->
+	<delete id="drop_block_art" parameterType="String">
+		delete from aricles where block_id = #{id}
+	</delete>
+	<delete id="drop_block" parameterType="String">
+		delete from blocks where block_id=#{value} or block_name=#{value}
+	</delete>
+ 
+ 
+ </mapper>

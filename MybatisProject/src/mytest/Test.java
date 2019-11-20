@@ -3,6 +3,7 @@ package mytest;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.io.Resources;
@@ -10,7 +11,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
+import oracle.sql.ARRAY;
 import personmapper.PerMapper;
+import personmapper.UserScores;
 import studentMapper.StuMapper;
 
 public class Test {
@@ -22,7 +25,36 @@ public class Test {
 			reader = Resources.getResourceAsReader("conf.xml");
 			SqlSessionFactory sqlfactory = new SqlSessionFactoryBuilder().build(reader);
 			session = sqlfactory.openSession();
+			UserScores mapper = session.getMapper(UserScores.class);
+			List<Score> userscores = new ArrayList<Score>();
+			//获取所有的用户id
+			List<String> users = mapper.queryUsers();
 			
+			//便利上述id，取得每个用户对文章的评分
+			for(String id:users) {
+				List<Score_table> stable = mapper.queryScores(id);
+//				int [][] scores = (int[][]) stable.toArray();
+//				System.out.println(scores[0][0]);
+				Score userscore = new Score();
+				userscore.setUserid(id);
+				userscore.setTable(stable);
+				userscores.add(userscore);
+			}
+			//System.out.println(userscores.get(1).getUserid()+"--"+userscores.get(1).getTable().get(0).getArtid());
+		
+			List<String> arts = mapper.queryArts();
+			for(String art:arts) {
+				System.out.println(art);
+			}
+			//转为二维数组
+			for(Score user:userscores) {
+				System.out.print(user.getUserid()+"---");
+				for(Score_table score:user.getTable()) {
+					score.getArtid();
+					System.out.println(arts.indexOf(score.getArtid()));
+					score.getScore();
+				}
+			}
 			// 一般配置
 //			String statement = "personmapper.personMapper.selectPerson";
 //			Person per = session.selectOne(statement,1);
@@ -63,18 +95,18 @@ public class Test {
 //			Person per2 = mapper.selectPerson(2);
 //			System.out.println(per.toString());
 		
-			StuMapper mapper = session.getMapper(StuMapper.class);
-
-			List<Student> students2 = mapper.selectStudentandCard();
-			if (session2 != null)
-				session2.close();
-			List<Student> students = mapper.selectStudentandCard();
-			if (session != null)
-				session.close();
-			for(Student student:students) {
-				System.out.print(student.getStuName()+",");
-				System.out.println(student.getCard().getScId());
-			}
+//			StuMapper mapper = session.getMapper(StuMapper.class);
+//
+//			List<Student> students2 = mapper.selectStudentandCard();
+//			if (session2 != null)
+//				session2.close();
+//			List<Student> students = mapper.selectStudentandCard();
+//			if (session != null)
+//				session.close();
+//			for(Student student:students) {
+//				System.out.print(student.getStuName()+",");
+//				System.out.println(student.getCard().getScId());
+//			}
 
 //			Class stuclass = mapper.selectClassandStu(1);
 //			System.out.println(stuclass.getcId()+","+stuclass.getcName());

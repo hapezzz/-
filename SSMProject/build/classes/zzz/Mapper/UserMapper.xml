@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="zzz.Mapper.UserMapper">
+	<cache />
+	<!-- 按页数查询数据库，Oracle方式 <select id="selectCurrent" parameterType="Page" resultType="User"> 
+		select * from(select rownum r,t.* from (select * from userinfo order by userid 
+		asc) t where rownum &lt;= #{currentPage}*#{pageSize})where r &gt;= (#{currentPage}-1)*#{pageSize}+1 
+		and r &lt;= #{currentPage}*#{pageSize} </select> -->
+	
+	<!-- 注册用户 -->
+	<!-- 注册校验邮箱 -->
+	<select id="queryEmail" resultType="int" parameterType="String">
+		select
+		count(*) from userinfo where email = #{email}
+	</select>
+	<!-- 注册校验账号 -->
+	<select id="queryAccount" resultType="int"
+		parameterType="String">
+		select count(*) from userinfo where account = #{account}
+	</select>
+	<!-- 注册校验用户昵称 -->
+	<select id="queryNickname" resultType="int"
+		parameterType="String">
+		select count(*) from userinfo where nickname =
+		#{nickname}
+	</select>
+	<insert id="regeisterUser" parameterType="User">
+		insert into
+		userinfo(user_id,nickname,account,password,email,portrait_path,register_time)
+		values(#{user_id},#{nickname},#{account},#{password},#{email},#{portrait_path},to_date(#{register_time},'yyyy-mm-dd
+		hh24:mi:ss'))
+	</insert>	
+		
+	<!-- 验证登陆 -->
+	<select id="queryLoginUser" resultType="String"
+		parameterType="String" flushCache="true">
+		select password from userinfo where
+		account=#{String}
+	</select>
+	
+	<select id="query_logininfo" parameterType="String" resultType="String" flushCache="true">
+		select last_time from logininfo where user_id=#{id}
+	</select>
+	<update id="update_logininfo">
+		update logininfo set last_time=to_date(#{time},'yyyy-mm-dd hh24:mi:ss') where user_id=#{id}
+	</update>
+	<insert id="create_logininfo">
+		insert into logininfo values(#{id},to_date(#{time},'yyyy-mm-dd hh24:mi:ss'))
+	</insert>
+	
+	<!-- 查询用户信息 -->
+	<select id="queryUser" resultType="User" parameterType="String"
+		flushCache="true">
+		select * from part_userinfo where account=#{key} or
+		user_id=#{key}
+	</select>
+	<select id="queryUserbyName" resultType="User" parameterType="String"
+		flushCache="true">
+		select * from part_userinfo where nickname=#{key}
+	</select>
+	<!-- 查询当前用户是否关注另一个用户 -->
+	<select id="followingornot" resultType="int"
+		parameterType="String" flushCache="true">
+		select count(*) from user_relation
+		where follower_id=#{array[0]} and following_id=#{array[1]}
+	</select>
+	<!-- 查询用户的粉丝个数 -->
+	<select id="queryNumofFollowers" resultType="int"
+		parameterType="String" flushCache="true">
+		select count(*) from user_relation
+		where following_id=#{foucused}
+	</select>
+	<!-- 查询用户的粉丝 -->
+	<select id="queryAllFollowers" resultType="String"
+		 flushCache="true">
+	select follower_id from (
+		select follower_id,rownum r from(
+			select follower_id from user_relation where following_id=#{id} order by follow_time desc
+		) where rownum &lt;=#{currentPage}*#{pageSize}
+	)where r &gt;= (#{currentPage}-1)*#{pageSize}+1 and r &lt;= #{currentPage}*#{pageSize} 
+	</select>
+	<!-- 查询用户的关注者个数 -->
+	<select id="queryNumofFollowing" resultType="int"
+		parameterType="String" flushCache="true">
+		select count(*) from user_relation
+		where follower_id = #{fan}
+	</select>
+	<!-- 查询用户的正在关注 -->
+	<select id="queryAllFollowing" resultType="String"
+		flushCache="true">
+	select following_id from (
+		select following_id,rownum r from(
+			select following_id from user_relation where follower_id=#{id} order by follow_time desc
+		) where rownum &lt;=#{currentPage}*#{pageSize}
+	)where r &gt;= (#{currentPage}-1)*#{pageSize}+1 and r &lt;= #{currentPage}*#{pageSize} 
+	</select>
+	<!-- 查询用户的文章信息 -->
+	<select id="queryArts_User" parameterType="String"
+		resultType="Article" flushCache="true">
+		select * from articles where
+		author_id=#{id} order by UPLOAD_DATE
+	</select>
+	<!-- 用户关注 -->
+	<insert id="following" parameterType="String">
+		insert into user_relation
+		values(#{array[0]},#{array[1]},to_date(#{array[2]},'yyyy-mm-dd
+		hh24:mi:ss'))
+	</insert>
+
+	<!-- 根据用户名查询用户 -->
+	<select id="queryByusername" parameterType="String"
+		resultType="User">
+		select * from part_userinfo where nickname like
+		'%${value}%'
+	</select>
+	<!-- 根据文章名查询文章 -->
+	<select id="queryByartname" parameterType="String"
+		resultType="Article" flushCache="true">
+		select * from articles where title like '%${value}%'
+	</select>
+	<!-- 查询板块 -->
+	<select id="queryByblockname" parameterType="String"
+		resultType="Article" flushCache="true">
+		select * from blocks where block_name like '%${value}%'
+	</select>
+
+	<!-- 查询当前管理者所管理的板块信息 -->
+	<select id="managersBlock" parameterType="String"
+		resultType="String" flushCache="true">
+		select block_name from blocks where
+		manager = #{id}
+	</select>
+	
+	
+	<!-- 用户注销 -->
+	<delete id="drop_userarticle" parameterType="String">
+		delete from articles where author_id=#{id}
+	</delete>
+	<delete id="drop_userlike" parameterType="String">
+		delete from fabulous where user_id=#{id}
+	</delete>
+	<delete id="drop_userreport" parameterType="String">
+		delete from reports where user_id=#{id}
+	</delete>
+	<update id="drop_usercomment" parameterType="String">
+		update comments set commentator='0'
+	</update>
+	<update id="drop_usermanager" parameterType="String">
+		update blocks set manager=null
+	</update>
+	<delete id="drop_user" parameterType="String">
+		delete from userinfo where user_id=#{id}
+	</delete>
+	
+	<!-- 取消关注 -->
+	<delete id="drop_following">
+		delete from user_relation where follower_id=#{er_id} and following_id=#{ing_id}
+	</delete>
+	
+	<!-- 修改用户信息 -->
+	<update id="update_user">
+		update userinfo set account=#{account}
+		<if test="nickname!=null and nickname!=''">,nickname=#{nickname}</if>
+		<if test="email!=null and email!=''">,email=#{email}</if>
+		<if test="portrait!=null and portrait!=''">,portrait_path=#{portrait}</if>
+		where account=#{account}
+	</update>
+	
+	<!-- 修改密码 -->
+	<update id="update_password">
+		update userinfo set password = #{password} where account =#{account}
+	</update>
+	<!-- <select id="queryBytitle" parameterType="String" resultType=""> select 
+		* from part_userinfo where title like '%${title}%' </select> -->
+</mapper>

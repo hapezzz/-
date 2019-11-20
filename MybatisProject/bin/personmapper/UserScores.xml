@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="personmapper.UserScores"> 
+	 <select id="queryScores" resultType="mytest.Score_table" parameterType="java.lang.String">
+	 	select artid,score from scores where userid = #{id} order by artid
+	 </select>
+	 
+	 <select id="queryUsers" resultType="String">
+	 	select distinct userid from scores  order by userid
+	 </select>
+	 <select id="queryArts" resultType="String">
+	 	select distinct artid from scores order by artid
+	 </select>
+ </mapper>

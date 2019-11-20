@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="zzz.Mapper.CommentMapper">
+<cache/>
+	<!-- 创建评论 -->
+	<insert id="create_comment" parameterType="Comment">
+		insert into comments values (#{comment_id},#{content},#{commentator},#{commented},#{article_id},to_date(#{comment_time},'yyyy-mm-dd hh24:mi:ss'))
+	</insert>
+	
+	
+	<!-- 查看文章的评论 
+	<select id="query_comments" resultType="Comment">
+		select * from(select c.*,rownum r from comments c order by comment_time desc where rownum &lt;= #{currentPage}*#{pageSize} and article_id=#{art_id}	) where  r &gt;= (#{currentPage}-1)*#{pageSize}+1 and r &lt;= #{currentPage}*#{pageSize} 
+	</select>
+	-->
+	<select id="query_comments" resultType="Comment" parameterType="String">
+		select * from comments where article_id=#{id} order by comment_time 
+	</select>
+	
+</mapper>

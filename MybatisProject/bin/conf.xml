@@ -30,6 +30,7 @@
 	<!-- 映射文件路径 -->
 	<mappers>
 		<mapper resource="personmapper/personMapper.xml" />
+		<mapper resource="personmapper/UserScores.xml" />
 		<mapper resource="studentmapper/studentMapper.xml"/>
 		<mapper resource="studentmapper/lazyLoadcard.xml" />
 	</mappers>
