@@ -47,7 +47,7 @@ public class ArticleHandler {
 	@SuppressWarnings("unchecked")
 	@RequestMapping("create_article")
 	public String create_article(@RequestParam("content")String content,HttpSession session,@RequestParam("blockname")String  blockname,@RequestParam("tag")String []tags,@RequestParam("title")String title) {
-		User user = (User)session.getAttribute("user");
+		User user = (User)session.getAttribute("currentuser");
 		if(user==null) {
 			//return "<a href='loginandregister/login.jsp'>»¹Î´µÇÂ½£¬ÇëµÇÂ¼</a>";
 		}
@@ -99,7 +99,7 @@ public class ArticleHandler {
 	
 	@RequestMapping("view_art/{art_id}")
 	public String view_art(@PathVariable("art_id")String art_id,HttpSession session,Map<String,Object>map) {
-		User user = (User)session.getAttribute("user");
+		User user = (User)session.getAttribute("currentuser");
 		
 		Article c_article = articleMapper.view_article(art_id);
 		int comment_num = articleMapper.query_comments(art_id);
@@ -163,7 +163,7 @@ public class ArticleHandler {
 	
 	public String like(HttpSession session,@PathVariable("art_id")String art_id) {
 		
-		User user = (User)session.getAttribute("user");
+		User user = (User)session.getAttribute("currentuser");
 		
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String date = sf.format(new Date());
@@ -179,7 +179,7 @@ public class ArticleHandler {
 	
 	public String report(HttpSession session,@PathVariable("art_id")String art_id) {
 		
-		User user = (User)session.getAttribute("user");
+		User user = (User)session.getAttribute("currentuser");
 		
 		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String date = sf.format(new Date());
@@ -194,7 +194,7 @@ public class ArticleHandler {
 	@RequestMapping("comment")
 	public void comment(HttpSession session,HttpServletRequest request) {
 		String art_id = request.getParameter("art_id");
-		User user = (User)session.getAttribute("user");
+		User user = (User)session.getAttribute("currentuser");
 		String content = request.getParameter("content");
 		
 		Comment comment = new Comment();

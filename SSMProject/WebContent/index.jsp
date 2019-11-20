@@ -8,6 +8,7 @@
 <title>首页</title>
 </head>
 <body>
+<a href="${pageContext.request.contextPath}/homepage">我的首页 </a>
 <a href="loginandregister/login.jsp">登陆</a>
 <a href="loginandregister/register.jsp">注册</a>
 <a href="${pageContext.request.contextPath}/query_block/足球">足球</a>

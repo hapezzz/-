@@ -55,7 +55,7 @@ public class FunctionHandler {
 		List<User> users = userMapper.queryByusername(name);
 		List<Article> arts = userMapper.queryByartname(name);
 
-		User user = (User)session.getAttribute("user");
+		User user = (User)session.getAttribute("currentuser");
 		if(user!=null) {
 			for(User temp:users) {
 				if(temp.getUser_id().equalsIgnoreCase(user.getUser_id())) {
@@ -76,7 +76,7 @@ public class FunctionHandler {
 		User user = userMapper.queryUserbyName(uname);
 		user.setFollower_num(userMapper.queryNumofFollowers(user.getUser_id()));
 		user.setFollowing_num(userMapper.queryNumofFollowing(user.getUser_id()));
-		User c_user = (User)session.getAttribute("user");
+		User c_user = (User)session.getAttribute("currentuser");
 		if(c_user!=null) {
 			String[] ids = { c_user.getUser_id(), user.getUser_id() };
 			map.put("flag", userMapper.followingornot(ids));
@@ -109,7 +109,7 @@ public class FunctionHandler {
 		page.setCurrentPage(currentPage);
 
 		if (key.equalsIgnoreCase("following")) {
-			List<String> ingids = userMapper.queryAllFollowing(((User) session.getAttribute("user")).getUser_id(),
+			List<String> ingids = userMapper.queryAllFollowing(((User) session.getAttribute("currentuser")).getUser_id(),
 					page.getCurrentPage(), page.getPageSize());
 			for (String id : ingids) {
 				User e = userMapper.queryUser(id);
@@ -117,7 +117,7 @@ public class FunctionHandler {
 			}
 			map.put("key", "following");
 		} else if (key.equalsIgnoreCase("follower")) {
-			List<String> ingids = userMapper.queryAllFollowers(((User) session.getAttribute("user")).getUser_id(),
+			List<String> ingids = userMapper.queryAllFollowers(((User) session.getAttribute("currentuser")).getUser_id(),
 					page.getCurrentPage(), page.getPageSize());
 			for (String id : ingids) {
 				User e = userMapper.queryUser(id);
@@ -137,7 +137,7 @@ public class FunctionHandler {
 	// È¡Ïû¹Ø×¢
 	@RequestMapping("cancle_follow/{ing_id}")
 	public String cancle_follow(HttpSession session, @PathVariable("ing_id") String ing_id) {
-		User user = (User) session.getAttribute("user");
+		User user = (User) session.getAttribute("currentuser");
 		userMapper.drop_following(user.getUser_id(), ing_id);
 		return "redirect:/reload";
 	}
@@ -145,7 +145,7 @@ public class FunctionHandler {
 	@RequestMapping("view_ownarts")
 	public String view_ownarts(HttpSession session,Map<String,Object>map) {
 		
-		User user = (User)session.getAttribute("user");
+		User user = (User)session.getAttribute("currentuser");
 		if(user==null) {
 			return"";
 		}
@@ -159,7 +159,7 @@ public class FunctionHandler {
 	@RequestMapping("update_user")
 	public String update_user(HttpSession session, HttpServletRequest request,@RequestParam("portrait")MultipartFile file) throws Exception {
 		String nickname = null, email = null,portrait = null;
-		User user =(User)session.getAttribute("user");
+		User user =(User)session.getAttribute("currentuser");
 		nickname = (String) request.getParameter("nickname");
 		if (userMapper.queryNickname(nickname) == 1) {
 			return "redirect:/loginandregister/update_user.jsp";
@@ -198,7 +198,7 @@ public class FunctionHandler {
 	
 	@RequestMapping("update_password")
 	public String update_password(HttpSession session,HttpServletRequest request) {
-		User user = (User)session.getAttribute("user");
+		User user = (User)session.getAttribute("currentuser");
 		String password = null;
 		String old_pwd = (String) request.getParameter("old_password");
 		if (!userMapper.queryLoginUser(user.getAccount()).equalsIgnoreCase(DigestUtils.md5Hex(old_pwd))) {

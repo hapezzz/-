@@ -32,7 +32,7 @@ public class LoginHandler {
 	@RequestMapping(value = "check", method = RequestMethod.POST)
 	public String check(@RequestParam("account") String account, @RequestParam("pwd") String password,
 			Map<String, Object> map, HttpServletResponse response, HttpSession session) {
-		if (session.getAttribute("user") != null) {
+		if (session.getAttribute("currentuser") != null) {
 			map.put("mes", "toomany");
 			return "redirect:/loginandregister/login.jsp";
 		}
@@ -57,16 +57,16 @@ public class LoginHandler {
 				userMapper.update_logininfo(user.getUser_id(), sf.format(new Date()));
 			}
 
+			session.setAttribute("currentuser", user);
+			
 			List<Article> ownarts = userMapper.queryArts_User(user.getUser_id());
 			session.setAttribute("ownarts", ownarts);
-			session.setAttribute("user", user);
+			
 			if (user.getManager_flag() == 1) {
 				List<String> blocks = userMapper.managersBlock(user.getUser_id());
 				session.setAttribute("blocks", blocks);
 			}
-
-			
-			return "redirect:/userinfo.jsp";
+			return "redirect:/index.jsp";
 
 		} else {
 			map.put("mes", "passworderror");
@@ -75,6 +75,14 @@ public class LoginHandler {
 
 	}
 
+	@RequestMapping("homepage")
+	public String homepage(HttpSession session) {
+		if(session.getAttribute("currentuser")==null) {
+			return "redirect:/loginandregister/login.jsp";
+		}
+		return "redirect:/userinfo.jsp";
+	}
+	
 	@Autowired
 	@Qualifier("user")
 	private User user;
@@ -135,8 +143,8 @@ public class LoginHandler {
 	@RequestMapping("reload")
 	public String reload(HttpSession session) {
 
-		if (session.getAttribute("user") != null) {
-			User user = userMapper.queryUser(((User) session.getAttribute("user")).getAccount());
+		if (session.getAttribute("currentuser") != null) {
+			User user = userMapper.queryUser(((User) session.getAttribute("currentuser")).getAccount());
 			user.setFollower_num(userMapper.queryNumofFollowers(user.getUser_id()));
 			user.setFollowing_num(userMapper.queryNumofFollowing(user.getUser_id()));
 			user.setLast_time(userMapper.query_logininfo(user.getUser_id()));

@@ -34,13 +34,13 @@
  </script>
 <body>
 <a href="${pageContext.request.contextPath}/logout">退出登陆</a>
-<c:set var="last_time" value="${sessionScope.user.getLast_time()}"></c:set>
+<c:set var="last_time" value="${sessionScope.currentuser.getLast_time()}"></c:set>
 <c:if test="${last_time!=null }">上次登陆时间：${last_time}</c:if>
-头像：<img src="${sessionScope.user.getPortrait_path()}" alt=""/><br>
-用户昵称：${sessionScope.user.getNickname()}<br>
-注册时间：${sessionScope.user.getRegister_time()}<br>
-<a href="${pageContext.request.contextPath}/queryfollow/following?followcount=${sessionScope.user.getFollowing_num()}">关注的人</a>：${sessionScope.user.getFollowing_num()}<br>
-<a href="${pageContext.request.contextPath}/queryfollow/follower?followcount=${sessionScope.user.getFollower_num()}">粉丝</a>：${sessionScope.user.getFollower_num()}<br>
+头像：<img src="${sessionScope.currentuser.getPortrait_path()}" alt=""/><br>
+用户昵称：${sessionScope.currentuser.getNickname()}<br>
+注册时间：${sessionScope.currentuser.getRegister_time()}<br>
+<a href="${pageContext.request.contextPath}/queryfollow/following?followcount=${sessionScope.currentuser.getFollowing_num()}">关注的人</a>：${sessionScope.currentuser.getFollowing_num()}<br>
+<a href="${pageContext.request.contextPath}/queryfollow/follower?followcount=${sessionScope.currentuser.getFollower_num()}">粉丝</a>：${sessionScope.currentuser.getFollower_num()}<br>
 <a href="${pageContext.request.contextPath}/loginandregister/textarea.jsp">写帖子</a>
 <div class="container">
     <form action="find" class="parent">
@@ -55,12 +55,12 @@
 	<a href="${pageContext.request.contextPath}/view_art/${art.getArticle_id()}">${art.getTitle() }</a>
 	${art.getContent() }<br>
 </c:forEach>
-<c:set var="manager" value="${sessionScope.user.getManager_flag()}"></c:set>
+<c:set var="manager" value="${sessionScope.currentuser.getManager_flag()}"></c:set>
 <c:if test="${manager==1 }">
 	创建板块:
 	<form action="create_block">
 		板块名字：<input type="text" name="block_name"/>
-		<input type="hidden" name="manager" value="${sessionScope.user.getUser_id()}"/>
+		<input type="hidden" name="manager" value="${sessionScope.currentuser.getUser_id()}"/>
 		<input type="submit" value="提交"/>
 	</form>
 	
