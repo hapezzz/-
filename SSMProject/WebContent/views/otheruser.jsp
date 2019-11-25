@@ -18,7 +18,11 @@
 	</c:choose>
 他的关注：${requestScope.f_user.getFollowing_num()}<br>
 他的粉丝：${requestScope.f_user.getFollower_num()}<br>
-
-
+他的文章：
+<c:set var="f_arts" value="${requestScope.f_arts }"></c:set>
+<c:forEach items="${f_arts }" var="art">
+	<a href="${pageContext.request.contextPath}/view_art/${art.getArticle_id()}">${art.getTitle() }</a>
+	${art.getContent() }<br>
+</c:forEach>
 </body>
 </html>

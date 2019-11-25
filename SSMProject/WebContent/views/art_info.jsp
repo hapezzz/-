@@ -21,7 +21,7 @@
 <c:if test="${report_flag==1 }">你已经举报过该文章了</c:if>
 <br>
 点赞数：${requestScope.like_num }    被举报数：${requestScope.report_num }<br>
-标签：${article.getTag1() } ${article.getTag2() } ${article.getTag3() } ${article.getTag4() } ${article.getTag5()s }
+标签：${article.getTag1() } ${article.getTag2() } ${article.getTag3() } ${article.getTag4() } ${article.getTag5() }
 <form action="${pageContext.request.contextPath}/comment" >
 输入你的评论：<input type="text" name="content"/>
 <input type="hidden" name="art_id" value="${article.getArticle_id() }"/>

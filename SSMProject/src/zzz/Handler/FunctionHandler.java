@@ -35,7 +35,7 @@ public class FunctionHandler {
 
 	@RequestMapping("follow/{following}")
 
-	// Ìí¼Ó¹Ø×¢
+	// ï¿½ï¿½Ó¹ï¿½×¢
 	public String follow(@SessionAttribute("user") User user, Map<String, Object> map,
 			@PathVariable("following") String following) {
 		if (user == null) {
@@ -49,7 +49,7 @@ public class FunctionHandler {
 		return "redirect:/reload";
 	}
 
-	// ²éÕÒÓÃ»§»òÕßÎÄÕÂ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	@RequestMapping("find")
 	public String find(HttpSession session, @RequestParam("name") String name, Map<String, Object> map) {
 		List<User> users = userMapper.queryByusername(name);
@@ -70,18 +70,22 @@ public class FunctionHandler {
 		return "success";
 	}
 
-	// ²é¿´ÁíÒ»¸öÓÃ»§µÄ²¿·ÖÐÅÏ¢£¨ÓÃ»§Ãû£¬µÈ¼¶£¨ÔÝ£©£¬×¢²áÊ±³¤£¬·¢±í¹ýµÄÎÄÕÂ£¬ÊÇ·ñÊÇ¹ÜÀíÔ±µÈ£©
 	@RequestMapping("find_user/{uname}")
 	public String find_user(@PathVariable("uname") String uname, Map<String, Object> map, HttpSession session) {
 		User user = userMapper.queryUserbyName(uname);
 		user.setFollower_num(userMapper.queryNumofFollowers(user.getUser_id()));
 		user.setFollowing_num(userMapper.queryNumofFollowing(user.getUser_id()));
+		
+		List<Article> arts = userMapper.queryArts_User(user.getUser_id());
+		map.put("f_arts",arts);
+		
 		User c_user = (User)session.getAttribute("currentuser");
 		if(c_user!=null) {
 			String[] ids = { c_user.getUser_id(), user.getUser_id() };
 			map.put("flag", userMapper.followingornot(ids));
 		}
 		map.put("f_user", user);
+
 		return "otheruser";
 	}
 
@@ -89,7 +93,7 @@ public class FunctionHandler {
 	@Qualifier("page")
 	Page page;
 
-	// ²é¿´·ÛË¿»òÕß¹Ø×¢µÄÈË
+	// ï¿½é¿´ï¿½ï¿½Ë¿ï¿½ï¿½ï¿½ß¹ï¿½×¢ï¿½ï¿½ï¿½ï¿½
 	@RequestMapping("queryfollow/{key}")
 	public String queryfollow(@PathVariable("key") String key, HttpServletRequest request, HttpSession session,
 			Map<String, Object> map) {
@@ -134,7 +138,7 @@ public class FunctionHandler {
 		return "follow";
 	}
 
-	// È¡Ïû¹Ø×¢
+	// È¡ï¿½ï¿½ï¿½ï¿½×¢
 	@RequestMapping("cancle_follow/{ing_id}")
 	public String cancle_follow(HttpSession session, @PathVariable("ing_id") String ing_id) {
 		User user = (User) session.getAttribute("currentuser");
@@ -155,7 +159,7 @@ public class FunctionHandler {
 		
 	}
 	
-	// ÐÞ¸Ä²¿·ÖÓÃ»§ÐÅÏ¢
+	// ï¿½Þ¸Ä²ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Ï¢
 	@RequestMapping("update_user")
 	public String update_user(HttpSession session, HttpServletRequest request,@RequestParam("portrait")MultipartFile file) throws Exception {
 		String nickname = null, email = null,portrait = null;

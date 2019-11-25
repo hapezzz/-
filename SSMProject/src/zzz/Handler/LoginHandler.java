@@ -100,12 +100,12 @@ public class LoginHandler {
 		} else if (userMapper.queryNickname(name) == 1) {
 			return "redirect:/loginandregister/register.jsp?mes=nameerror";
 		} else {
-			// 生成用户的唯一标识
+			// 锟斤拷锟斤拷锟矫伙拷锟斤拷唯一锟斤拷识
 			String a = UUID.randomUUID().toString().replace("-", "");
 			StringBuilder id = new StringBuilder(a);
 			id.insert(0, 'U');
 
-			// 获取用户上传的头像，默认是default.png
+			// 锟斤拷取锟矫伙拷锟较达拷锟斤拷头锟斤拷默锟斤拷锟斤拷default.png
 			String path = "image/portrait/default.png";
 
 			if (file.getOriginalFilename().contains(".")) {
@@ -125,7 +125,7 @@ public class LoginHandler {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String date = sf.format(new Date());
 
-			// 获取用户对象并赋值
+			// 锟斤拷取锟矫伙拷锟斤拷锟襟并革拷值
 			password = DigestUtils.md5Hex(password);
 			user.setUser_id(id.toString());
 			user.setAccount(account);
@@ -135,7 +135,7 @@ public class LoginHandler {
 			user.setNickname(name);
 			user.setRegister_time(date);
 			userMapper.regeisterUser(user);
-			// 跳转到登陆界面
+			// 锟斤拷转锟斤拷锟斤拷陆锟斤拷锟斤拷
 			return "redirect:/loginandregister/login.jsp";
 		}
 	}
@@ -168,7 +168,7 @@ public class LoginHandler {
 
 	@RequestMapping("logout")
 	public String logout(HttpSession session) {
-		session.removeAttribute("user");
+		session.removeAttribute("currentuser");
 		session.removeAttribute("ownarts");
 		return "redirect:/index.jsp";
 	}
